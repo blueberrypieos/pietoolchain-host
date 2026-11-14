@@ -1,0 +1,84 @@
+#!/usr/bin/make -f
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright (c) 2026 The Blueberry Pie OS Authors
+include /usr/share/dpkg/architecture.mk
+include /usr/share/dpkg/buildopts.mk
+include /usr/share/dpkg/pkg-info.mk
+export SOURCE_DATE_EPOCH
+export PYTHONDONTWRITEBYTECODE := 1
+
+B := $(CURDIR)/debian/build
+L := debian/pietoolchain-host/usr/lib/pietoolchain/toolchain
+build: build-arch build-indep
+binary: binary-arch binary-indep
+
+$(B)/stamp-check:
+	mkdir -p $(B)
+ifeq ($(PIE_FULL_SOURCE),)
+	python3 sdk/pie-source-guard $(CURDIR)
+endif
+	python3 sdk/mksrccopyright.py $(CURDIR) --check
+	touch $@
+
+build-indep: $(B)/stamp-check
+binary-indep: build-indep
+	dh binary-indep -ppietoolchain
+	$(MAKE) -f debian/rules clean-host
+
+build-arch: $(B)/stamp-host
+$(B)/stamp-host: $(B)/stamp-check
+	dh build-arch -ppietoolchain-host
+	$(MAKE) -f debian/rules clean-host
+	touch $@
+binary-arch: build-arch
+	dh binary-arch -ppietoolchain-host
+	$(MAKE) -f debian/rules clean-host
+
+override_dh_update_autotools_config:
+
+override_dh_auto_configure:
+
+override_dh_auto_build-indep:
+
+override_dh_auto_build-arch:
+	PREFIX=$(B)/prefix BUILD=$(B) JOBS=$(or $(DEB_BUILD_OPTION_PARALLEL),1) toolchain/build-cctools.sh
+	PREFIX=$(B)/prefix BUILD=$(B) toolchain/build-mig.sh
+
+override_dh_auto_test-indep:
+
+override_dh_auto_test-arch:
+ifeq ($(filter nocheck,$(DEB_BUILD_OPTIONS)),)
+	PYTHONDONTWRITEBYTECODE=1 python3 toolchain/tests/reproducible.py
+endif
+
+override_dh_auto_install-indep:
+
+override_dh_auto_install-arch:
+	install -d $(L)/prefix/bin $(L)/prefix/libexec debian/pietoolchain-host/usr/share/pietoolchain
+	cp -a toolchain/bin $(L)/
+	cp -P $(B)/prefix/bin/aarch64-apple-darwin-* $(B)/prefix/bin/mig $(L)/prefix/bin/
+	cp $(B)/prefix/libexec/migcom $(L)/prefix/libexec/
+	ln -s ../../bin/cc $(L)/prefix/bin/cc
+	cp -a toolchain/xnu-make toolchain/hostcompat toolchain/iig toolchain/kernel $(L)/
+	set -e; for f in $$(grep -v '^#' debian/hostinc); do \
+		install -D -m 644 src/cctools-port/cctools/include/$$f $(L)/hostinc/$$f; \
+	done
+	install -d $(L)/prefix/lib/cctools-host
+	install -m 644 $(B)/prefix/lib/cctools-host/libstuff.a $(B)/prefix/lib/cctools-host/libmacho.a $(L)/prefix/lib/cctools-host/
+	install -m 644 share/rules.mk share/tools.mk debian/pietoolchain-host/usr/share/pietoolchain/
+	install -D -m 644 sdk/README.source debian/pietoolchain-host/usr/share/doc/pietoolchain-host/README.source
+	install -m 755 share/pbxproj-tools.py share/pbxproj-sources.py share/pie-cross-deps \
+		share/pie-source-guard debian/pietoolchain-host/usr/share/pietoolchain/
+
+override_dh_dwz:
+
+clean-host:
+	rm -rf debian/.debhelper
+	rm -f debian/debhelper-build-stamp debian/*.debhelper.log debian/*.debhelper
+
+clean: clean-host
+	rm -rf $(B) \
+		debian/files debian/*.substvars \
+		$(foreach p,$(shell sed -n 's/^Package: *//p' debian/control),debian/$(p))
+
+.PHONY: build build-arch build-indep binary binary-arch binary-indep clean clean-host

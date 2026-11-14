@@ -1,0 +1,2 @@
+foreign-arch src/cctools(-port/cctools)?/(include|libstuff|libmacho)/.* cctools reads Mach-O files of every architecture. These files are compiled into it.
+foreign-arch usr/lib/pietoolchain/toolchain/hostinc/.* The cctools headers xnu's host tools read, for its i386 and Mach-O host code.

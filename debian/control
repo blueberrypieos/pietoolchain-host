@@ -1,0 +1,53 @@
+Source: pietoolchain-host
+Section: devel
+Priority: optional
+Maintainer: Maxwell <maxwell@blueberrypieos.com>
+Build-Depends: debhelper-compat (= 13),
+ clang-21:native,
+ clang-tools-21:native,
+ lld-21:native,
+ llvm-21:native,
+ llvm-21-dev:native,
+ libclang-21-dev:native,
+ libclang-rt-21-dev:native,
+ python3-clang-21:native,
+ bison,
+ flex,
+ m4,
+ tcsh,
+ unifdef:native,
+ original-awk,
+ autoconf,
+ automake,
+ libtool,
+ gperf,
+ cmake,
+ ninja-build,
+ pkgconf:native,
+ uuid-dev:native,
+ python3:native,
+ ca-certificates,
+ git,
+ patch,
+ ed
+Standards-Version: 4.7.3
+Homepage: https://github.com/blueberrypieos/pietoolchain-host
+Vcs-Git: https://github.com/blueberrypieos/pietoolchain-host.git
+Vcs-Browser: https://github.com/blueberrypieos/pietoolchain-host
+Rules-Requires-Root: no
+
+Package: pietoolchain-host
+Architecture: amd64
+Multi-Arch: foreign
+Depends: ${shlibs:Depends}, ${misc:Depends}, clang-21, llvm-21, bison, flex, python3, make, pkgconf,
+ tcsh, unifdef, original-awk, m4, uuid-dev, cmake, ninja-build, python3-clang-21
+Breaks: pietoolchain (<< 0.3.0)
+Replaces: pietoolchain (<< 0.3.0)
+Description: LLVM / Clang cross compiler toolchain for darwin-arm64
+
+Package: pietoolchain
+Architecture: all
+Section: oldlibs
+Depends: ${misc:Depends}, pietoolchain-host (= ${binary:Version}), pietoolchain-sdk (>= 0.2.0)
+Description: transitional package for the PIE toolchain
+ This transitional package installs the host tools and SDK.
