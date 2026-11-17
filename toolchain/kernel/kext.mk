@@ -50,7 +50,8 @@ KEXT_ARCHFLAGS := -arch arm64 -mcpu=generic -isysroot $(KEXT_SDK) -mmacosx-versi
 KEXT_COMMON := $(KEXT_ARCHFLAGS) -Os -g -mkernel -nostdinc -fno-common \
 	-DKERNEL=1 -DKERNEL_PRIVATE=1 -DPRIVATE=1 -DAPPLE -DNeXT \
 	-I$(KEXT_KF)/PrivateHeaders -I$(KEXT_KF)/Headers \
-	-idirafter $(KEXT_SDK)/usr/local/include/kernel -idirafter $(KEXT_SDK)/usr/include
+	-idirafter $(KEXT_SDK)/usr/include/kernel -idirafter $(KEXT_SDK)/usr/local/include/kernel \
+	-idirafter $(KEXT_SDK)/usr/include
 KEXT_C_FLAGS := -std=gnu11
 KEXT_CXX_FLAGS := -std=gnu++17 -fapple-kext -fno-rtti -fno-exceptions \
 	-fno-register-global-dtors-with-atexit -mllvm -disable-atexit-based-global-dtor-lowering

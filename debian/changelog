@@ -1,3 +1,11 @@
+pietoolchain-host (0.3.1) resolute; urgency=medium
+
+  * kext.mk finds the kernel headers in usr/include/kernel, where
+    blueberry-pie-os-kernel-dev installs them now, before
+    usr/local/include/kernel.
+
+ -- Maxwell <maxwell@blueberrypieos.com>  Tue, 17 Nov 2026 03:53:57 +0000
+
 pietoolchain-host (0.3.0) resolute; urgency=medium
 
   * Package the PIE host tools and shared build helpers.
