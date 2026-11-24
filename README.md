@@ -11,4 +11,3 @@ Build a source package with `pie-source source`, extract it with
 
 The tools install under `/usr/lib/pietoolchain/toolchain`.
 The shared helpers install under `/usr/share/pietoolchain`.
-The `pietoolchain` transitional package installs these tools and the SDK.

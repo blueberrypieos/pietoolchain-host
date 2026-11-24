@@ -1,3 +1,10 @@
+pietoolchain-host (0.3.2) resolute; urgency=medium
+
+  * The transitional pietoolchain package is gone. Install
+    pietoolchain-host and pietoolchain-sdk.
+
+ -- Maxwell <maxwell@blueberrypieos.com>  Tue, 24 Nov 2026 17:38:23 +0000
+
 pietoolchain-host (0.3.1) resolute; urgency=medium
 
   * kext.mk finds the kernel headers in usr/include/kernel, where

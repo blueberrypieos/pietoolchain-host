@@ -41,13 +41,6 @@ Architecture: amd64
 Multi-Arch: foreign
 Depends: ${shlibs:Depends}, ${misc:Depends}, clang-21, llvm-21, bison, flex, python3, make, pkgconf,
  tcsh, unifdef, original-awk, m4, uuid-dev, cmake, ninja-build, python3-clang-21
-Breaks: pietoolchain (<< 0.3.0)
+Breaks: pietoolchain (<< 0.3.2)
 Replaces: pietoolchain (<< 0.3.0)
 Description: LLVM / Clang cross compiler toolchain for darwin-arm64
-
-Package: pietoolchain
-Architecture: all
-Section: oldlibs
-Depends: ${misc:Depends}, pietoolchain-host (= ${binary:Version}), pietoolchain-sdk (>= 0.2.0)
-Description: transitional package for the PIE toolchain
- This transitional package installs the host tools and SDK.
